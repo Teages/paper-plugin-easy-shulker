@@ -1,0 +1,8 @@
+name: paper-plugin-easy-shulker
+version: '1.0-SNAPSHOT'
+main: dev.teages.paperPluginEasyShulker.PaperPluginEasyShulker
+api-version: '1.21'
+prefix: [ EasyShulker ]
+authors: [ Teages ]
+description: A simple plugin allow you open shulker box from your hand
+website: https://github.com/Teages/paper-plugin-easy-shulker
