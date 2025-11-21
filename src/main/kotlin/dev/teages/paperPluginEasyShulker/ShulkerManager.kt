@@ -84,8 +84,8 @@ class ShulkerManager(private val plugin: Plugin) : Listener {
             val hotIndex = event.hotbarButton
             if (hotIndex >= 0) {
                 val hotItem = player.inventory.getItem(hotIndex)
-                if (ShulkerUtils.isSimilarShulkerBox(hotItem, shulkerItem) ||
-                    ShulkerUtils.isSimilarShulkerBox(currentItem, shulkerItem)) {
+                if (ShulkerUtils.isSameShulkerInstance(hotItem, shulkerItem) ||
+                    ShulkerUtils.isSameShulkerInstance(currentItem, shulkerItem)) {
                     return true
                 }
             }
@@ -93,29 +93,29 @@ class ShulkerManager(private val plugin: Plugin) : Listener {
 
         // Check offhand swap
         if (event.click == ClickType.SWAP_OFFHAND) {
-            if (ShulkerUtils.isSimilarShulkerBox(player.inventory.itemInOffHand, shulkerItem) ||
-                ShulkerUtils.isSimilarShulkerBox(currentItem, shulkerItem)) {
+            if (ShulkerUtils.isSameShulkerInstance(player.inventory.itemInOffHand, shulkerItem) ||
+                ShulkerUtils.isSameShulkerInstance(currentItem, shulkerItem)) {
                 return true
             }
         }
 
         // Check collect to cursor action
         if (event.action == InventoryAction.COLLECT_TO_CURSOR) {
-            if (ShulkerUtils.isSimilarShulkerBox(cursor, shulkerItem)) {
+            if (ShulkerUtils.isSameShulkerInstance(cursor, shulkerItem)) {
                 return true
             }
         }
 
         // General check for shulker box interactions
-        if (ShulkerUtils.isSimilarShulkerBox(currentItem, shulkerItem) ||
-            ShulkerUtils.isSimilarShulkerBox(cursor, shulkerItem)) {
+        if (ShulkerUtils.isSameShulkerInstance(currentItem, shulkerItem) ||
+            ShulkerUtils.isSameShulkerInstance(cursor, shulkerItem)) {
             return true
         }
 
         // Check drop actions
         if (event.click == ClickType.DROP || event.click == ClickType.CONTROL_DROP) {
-            if (ShulkerUtils.isSimilarShulkerBox(currentItem, shulkerItem) ||
-                ShulkerUtils.isSimilarShulkerBox(cursor, shulkerItem)) {
+            if (ShulkerUtils.isSameShulkerInstance(currentItem, shulkerItem) ||
+                ShulkerUtils.isSameShulkerInstance(cursor, shulkerItem)) {
                 return true
             }
         }
@@ -154,7 +154,7 @@ class ShulkerManager(private val plugin: Plugin) : Listener {
         val shulker = session.getShulkerBox()
         
         // Cancel if trying to drop the shulker box being viewed
-        if (ShulkerUtils.isSimilarShulkerBox(dropped, shulker)) {
+        if (ShulkerUtils.isSameShulkerInstance(dropped, shulker)) {
             event.isCancelled = true
         }
     }
@@ -169,6 +169,8 @@ class ShulkerManager(private val plugin: Plugin) : Listener {
         val session = activeSessions.remove(player) ?: return
         // Save the final state of the shulker box
         session.save(event.inventory)
+        // Clean up the session UUID tag
+        session.cleanup()
     }
     
     /**
@@ -176,7 +178,7 @@ class ShulkerManager(private val plugin: Plugin) : Listener {
      * Creates a new session and opens the shulker box interface.
      */
     fun openShulkerBox(player: Player, shulkerBox: ItemStack) {
-        val session = ShulkerSession(player, shulkerBox)
+        val session = ShulkerSession(player, shulkerBox, plugin)
         activeSessions[player] = session
         session.open()
     }
@@ -191,6 +193,8 @@ class ShulkerManager(private val plugin: Plugin) : Listener {
         val session = activeSessions.remove(player) ?: return
         // Save the current state before the player disconnects
         session.save(player.openInventory.topInventory)
+        // Clean up the session UUID tag
+        session.cleanup()
     }
 
     /**
@@ -203,6 +207,8 @@ class ShulkerManager(private val plugin: Plugin) : Listener {
         val session = activeSessions.remove(player) ?: return
         // Save the current state before the player respawns
         session.save(player.openInventory.topInventory)
+        // Clean up the session UUID tag
+        session.cleanup()
     }
     
 

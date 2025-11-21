@@ -7,6 +7,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MenuType
 import org.bukkit.inventory.meta.BlockStateMeta
+import org.bukkit.plugin.Plugin
 
 /**
  * Represents a session for a player interacting with a shulker box.
@@ -15,6 +16,7 @@ import org.bukkit.inventory.meta.BlockStateMeta
 class ShulkerSession(
     private val player: Player,
     private val shulkerBox: ItemStack,
+    private val plugin: Plugin,
 ) {
     
     // Getters for the player and shulker box associated with this session
@@ -27,6 +29,10 @@ class ShulkerSession(
      * Creates a custom inventory view that displays the contents of the shulker box.
      */
     fun open() {
+        // Add a unique session UUID to identify this specific shulker box instance
+        val sessionKey = ShulkerUtils.createSessionKey(plugin)
+        ShulkerUtils.addSessionUuid(shulkerBox, sessionKey)
+        
         // Get the block state metadata from the shulker box item
         val meta = shulkerBox.itemMeta as? BlockStateMeta ?: return
         // Get the actual shulker box block state
@@ -59,6 +65,15 @@ class ShulkerSession(
         meta.blockState = shulker
         // Apply the updated metadata to the item
         shulkerBox.itemMeta = meta
+    }
+    
+    /**
+     * Cleans up the session by removing the session UUID tag.
+     * This should be called when the shulker box is closed.
+     */
+    fun cleanup() {
+        val sessionKey = ShulkerUtils.createSessionKey(plugin)
+        ShulkerUtils.removeSessionUuid(shulkerBox, sessionKey)
     }
 
     /**
