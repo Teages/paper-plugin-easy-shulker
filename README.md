@@ -2,20 +2,16 @@
 
 A lightweight Paper plugin that allows players to open Shulker Boxes directly from their hand without placing them on the ground.
 
+> The project is vibe coding with AI, use at your own risk.
+
 ## Features
 
 - **Open from Hand**: Simply right-click while holding a Shulker Box to open it.
-- **Seamless Integration**: Works just like a regular inventory.
-- **Safety First**:
-  - Prevents placing Shulker Boxes inside other Shulker Boxes (anti-nesting).
-  - Prevents dropping or moving the currently opened Shulker Box to avoid item loss.
-  - Automatically saves inventory state on close, quit, or death.
-- **Native Experience**: Uses the native Shulker Box interface and sound effects.
 
 ## Requirements
 
 - **Server Software**: Paper (or forks)
-- **Minecraft Version**: 1.21+
+- **Minecraft Version**: 1.21.8+
 
 ## Installation
 
